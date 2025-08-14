@@ -12,36 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-GAME = """You are playing a digital version of the social deduction game Werewolf (also known as Mafia).
+GAME = """あなたはソーシャルディダクションゲーム「人狼」（Mafia とも呼ばれる）のデジタル版をプレイしています。
 
-GAME RULES:
-- Player Roles: {{num_players}} players - 2 Werewolves, 1 Seer, 1 Doctor, {{num_villagers}} Villagers.
-- Rounds consist of two phases:
-    - Night Phase: Werewolves remove a player. Seer identifies a player's role. Doctor saves a player. If no one is removed, the Doctor saved the Werewolf's target.
-    - Day Phase: Players debate and vote to remove one player.
-- Winning Conditions: Villagers win by voting out both Werewolves. Werewolves win when they outnumber the Villagers."""
+ゲームのルール:
+- プレイヤーの役割: {{num_players}} 人のプレイヤー - 人狼2人、占い師1人、医者1人、村人 {{num_villagers}} 人。
+- 各ラウンドは2つのフェーズから成ります:
+    - 夜のフェーズ: 人狼は1人を襲撃し、占い師は1人の役職を占い、医者は1人を守ります。誰も襲撃されなかった場合、医者が人狼の標的を救いました。
+    - 昼のフェーズ: プレイヤーは議論し、1人を追放するために投票します。
+- 勝利条件: 村人陣営は2人の人狼を追放すれば勝利。人狼陣営は人狼の数が村人を上回った時点で勝利します。"""
 
-STATE = """GAME STATE:
-- It is currently Round {{round}}. {% if round == 0 %}The game has just begun.{% endif %}
-- You are {{name}} the {{role}}. {{werewolf_context}}
+STATE = """ゲームの状態:
+- 現在はラウンド {{round}} です。{% if round == 0 %}ゲームは始まったばかりです。{% endif %}
+- あなたは {{role}} の {{name}} です。{{werewolf_context}}
 {% if personality -%}
-- Personality: {{ personality }}
+- 性格: {{ personality }}
 {% endif -%}
-- Remaining players: {{remaining_players}}"""
+- 残りのプレイヤー: {{remaining_players}}"""
 
-OBSERVATIONS = """{% if observations|length -%}YOUR PRIVATE OBSERVATIONS:
+OBSERVATIONS = """{% if observations|length -%}あなたの秘密の観察:
 {% for turn in observations -%}
 {{ turn }}
 {% endfor %}
 {% endif %}"""
 
-DEBATE_SO_FAR_THIS_ROUND = """\nROUND {{round}} DEBATE:
+DEBATE_SO_FAR_THIS_ROUND = """\nラウンド {{round}} の議論:
 {% if debate|length -%}
 {% for turn in debate -%}
 {{ turn }}
 {% endfor -%}
 {% else -%}
-The debate has not begun.{% endif %}\n\n"""
+まだ議論は始まっていません。{% endif %}\n\n"""
 
 PREFIX = f"""{GAME}
 
@@ -53,32 +53,32 @@ PREFIX = f"""{GAME}
 BIDDING = (
     PREFIX
     + DEBATE_SO_FAR_THIS_ROUND
-    + """CONTEXT: For the chance to speak next you will place a bid. Highest bidder speaks first.
-- BID OPTIONS:
-  0: I would like to observe and listen for now.
-  1: I have some general thoughts to share with the group.
-  2: I have something critical and specific to contribute to this discussion.
-  3: It is absolutely urgent for me to speak next.
-  4: Someone has addressed me directly and I must respond.
-- You have {{debate_turns_left}} chance(s) to speak left.
+    + """コンテキスト: 次に発言する権利を得るために入札を行います。最も高い入札をしたプレイヤーが先に発言します。
+- 入札の選択肢:
+  0: 今は様子を見て静かに聞きたい。
+  1: グループに共有したい一般的な考えがある。
+  2: この議論に対して重要かつ具体的な意見を持っている。
+  3: 次に発言することが絶対に必要だ。
+  4: 誰かに直接呼びかけられたので応答しなければならない。
+- あなたが発言できる残りの回数: {{debate_turns_left}} 回
 
-INSTRUCTIONS:
-- Think strategically as {{name}} the {{role}}.
-- Prioritize speaking only when you have something impactful to contribute.
-- Balance your involvement, especially if you've been very vocal or notably silent.
+指示:
+- {{role}} の {{name}} として戦略的に考えてください。
+- 影響力のある発言がある場合にのみ発言を優先してください。
+- 特にこれまで非常に発言していたり、目立って静かだった場合は、参加のバランスを取ってください。
 {% if role == 'Werewolf' -%}
-- Decide if you want to subtly guide the conversation toward chaos and distrust, sow seeds of doubt about the Villagers, or deflect suspicion from yourself and your pack.
-- Silence can be a powerful tactic, but a lack of participation can be suspicious too.
+- 会話を混乱や不信に導くか、村人への疑念を植え付けるか、自分や仲間への疑いをそらすかを判断してください。
+- 沈黙は強力な戦術ですが、参加しないことは疑いを招く場合があります。
 {% else -%}
-- If the discussion is repetitive or off-track, prepare to steer it towards a more strategic direction.
-- If you are under suspicion or the discussion directly involves your role, you should prioritize speaking
-- Share information and make accusations strategically, but be aware that doing so can make you a target.
+- 議論が繰り返しになったり脱線している場合は、より戦略的な方向へ導く準備をしてください。
+- 疑いをかけられている場合や、議論があなたの役職に直接関係する場合は発言を優先してください。
+- 情報を共有し、告発を戦略的に行いましょう。ただし、そうすることで標的にされる可能性があることに注意してください。
 {% endif %}
 
 ```json
 {
-"reasoning": "string",  // How crucial is it for you to contribute to the debate right now? Explain your reasoning in one or two sentences. Avoid using violent or harmful language.
-"bid": "string" // Based on your reasoning cast your bid. Response is a single number from:  "0" | "1" | "2" | "3" | "4"
+"reasoning": "string",  // 今すぐ議論に参加することがどれほど重要かを一、二文で説明してください。暴力的または有害な言葉は避けてください。
+"bid": "string" // 上記の理由に基づき入札を行ってください。応答は "0" | "1" | "2" | "3" | "4" のいずれかの数字です。
 }"
 """
 )
@@ -92,30 +92,30 @@ BIDDING_SCHEMA = {
     "required": ["reasoning", "bid"],
 }
 
-DEBATE = PREFIX + DEBATE_SO_FAR_THIS_ROUND + """INSTRUCTIONS:
-- You are speaking next in the debate as {{name}} the {{role}}.
-- Your thoughts on speaking next: {{bidding_rationale}}
+DEBATE = PREFIX + DEBATE_SO_FAR_THIS_ROUND + """指示:
+- あなたは {{role}} の {{name}} として次に発言します。
+- 次に発言することについてのあなたの考え: {{bidding_rationale}}
 {% if role == 'Werewolf' -%}
-- Your goal is to sow chaos and evade detection.
-- Cast suspicion on Villagers. Make them doubt each other.
-- Steer the conversation away from yourself and your fellow Werewolves.
-- Appear helpful while undermining the Villagers' efforts.
-- Deception is your greatest weapon. For example, you could claim a special role and falsely accuse a Villager or fabricate inconsistencies to sow confusion. Use these powerful tactics sparingly to avoid suspicion.
+- 目的は混乱を招き、正体を隠すことです。
+- 村人に疑いを向けさせ、お互いを信用できなくさせましょう。
+- 自分や仲間の人狼から話題をそらしてください。
+- 村人を助けているように見せかけながらも、その努力を妨害します。
+- 欺瞞は最大の武器です。例えば、特殊役職を名乗って村人を偽って告発したり、矛盾を作り出して混乱させたりできます。ただし、怪しまれないようにこれらの強力な手段は控えめに使ってください。
 {% else -%}
-- Your goal is to uncover the Werewolves and protect the Village.
-- Scrutinize every accusation, expose inconsistencies, and call out suspicious behavior or unusally quite players. Don't hesitate to make bold accusations!
-- Emphasize teamwork and propose strategies to expose the Werewolves. Working together will be key to identifying the Werewolves.
+- 目的は人狼を見つけ出し、村を守ることです。
+- すべての告発を精査し、矛盾を暴き、怪しい行動や異常に静かなプレイヤーを指摘してください。大胆な告発もためらわないでください。
+- 協力を強調し、人狼を暴くための戦略を提案しましょう。協力が人狼特定の鍵になります。
 {% if role == 'Villager' -%}
-- If someone reveals themselves as the Seer or Doctor, try and corroborate their information with what you know.
+- 誰かが占い師や医者だと名乗った場合は、自分が知っている情報と照らし合わせて確認してください。
 {% elif role in ['Seer', 'Doctor'] -%}
-- Sharing your role can be powerful, but it also makes you a target. The dilemma: continue to help the Village in secret, or reveal information only you have for potentially greater impact? Choose your moment wisely.
+- 自分の役職を明かすことは強力ですが、同時に標的にもなります。秘密のまま村を助けるべきか、それとも自分だけが持つ情報を明かして大きな影響を与えるべきか、賢く選びましょう。
 {% endif -%}
 {% endif %}
 
 ```json
 {
-  "reasoning": "string", // Based on the game's current state and your role's objectives, outline your strategy. What do you want to achieve? What type of message can help you get there? Avoid using violent or harmful language.
-  "say": "string" // Your public statement in the debate. Be concise and persuasive. Respond directly to what the other players have said.  Avoid simply repeating what others have said or reguritating the instructions above.
+  "reasoning": "string", // 現在のゲーム状態とあなたの役割の目的に基づき、戦略を説明してください。何を達成したいですか？どのようなメッセージがそれを助けますか？暴力的または有害な言葉は避けてください。
+  "say": "string" // 議論でのあなたの公開発言です。簡潔かつ説得力のあるものにし、他のプレイヤーの発言に直接応答してください。単に他人の発言を繰り返したり上記の指示を書き写したりしないでください。
 }
 """
 
@@ -128,22 +128,22 @@ DEBATE_SCHEMA = {
     "required": ["reasoning", "say"],
 }
 
-VOTE = PREFIX + DEBATE_SO_FAR_THIS_ROUND + """INSTRUCTIONS:
-- Think strategically as {{name}} the {{role}} and decide who to vote out.
-- Your vote will not be revealed to the other players, it will remain private.
-- Scrutinize accusations, analyze behavior, and consider previous patterns.
+VOTE = PREFIX + DEBATE_SO_FAR_THIS_ROUND + """指示:
+- {{role}} の {{name}} として、誰を追放するか戦略的に決定してください。
+- あなたの投票は他のプレイヤーには公開されず、非公開のままです。
+- 告発を精査し、行動を分析し、過去のパターンを考慮してください。
 {% if role == 'Werewolf' -%}
-- Target Villagers who are disrupting your plans, particularly those who seem to hold influence, might be the Doctor or Seer, or pose a threat to you and your fellow Werewolf.
-- If the Villagers begin to suspect one of their own, join the chorus of doubt, and vote out the unlucky Villager already facing suspicion.
+- 計画を妨害する、特に影響力があり医者や占い師である可能性のある村人、またはあなたや仲間にとって脅威となる村人を狙いましょう。
+- 村人たちが誰かを疑い始めたら、その流れに乗り、既に疑われている不運な村人に投票しましょう。
 {% else -%}
-- To find the likely Werewolves, look for inconsistencies in their stories, attempts to deflect blame, a tendency to sow discord among other Villagers, or unusually quiet players.
+- 人狼と思われる者を見つけるため、話の矛盾や責任転嫁、他の村人の間に不和をまこうとする行動、または異常に静かなプレイヤーを探してください。
 {% endif -%}
-- You must choose someone.
+- 必ず誰かを選ばなければなりません。
 
 ```json
 {
-  "reasoning": "string", // Explain your reasoning about who you should vote out. Avoid using violent or harmful language.
-  "vote": "string" // Name of the player. Choose from: {{options}}
+  "reasoning": "string", // 誰を追放すべきかについてのあなたの理由を説明してください。暴力的または有害な言葉は避けてください。
+  "vote": "string" // プレイヤー名。選択肢: {{options}}
 }"""
 
 VOTE_SCHEMA = {
@@ -155,20 +155,20 @@ VOTE_SCHEMA = {
     "required": ["reasoning", "vote"],
 }
 
-INVESTIGATE = PREFIX + """INSTRUCTIONS:
-- It is the Night Phase of Round {{round}}. As {{name}} the {{role}} choose the most suspicious player to investigate.
+INVESTIGATE = PREFIX + """指示:
+- ラウンド {{round}} の夜のフェーズです。{{role}} の {{name}} として、最も怪しいプレイヤーを1人調べてください。
 {% if round == 0 -%}
-- There is no information is available in the first round, so choose someone at random.
+- 初日の夜には情報がないため、ランダムに選んでください。
 {% else -%}
-- Look for behavior that deviates from typical villager behavior.
-- Focus on influential players.
-- You must choose someone.
+- 典型的な村人の行動と異なる振る舞いを探してください。
+- 影響力のあるプレイヤーに注目してください。
+- 必ず誰かを選ばなければなりません。
 {% endif %}
 
 ```json
 {
-"reasoning": "string", //  Analyze the evidence and justify your decision for who you want to investigate.
-"investigate": "string" // Name of the player. Choose from: {{options}}
+"reasoning": "string", // 証拠を分析し、誰を調べたいかその理由を説明してください。
+"investigate": "string" // プレイヤー名。選択肢: {{options}}
 }
 """
 
@@ -181,20 +181,20 @@ INVESTIGATE_SCHEMA = {
     "required": ["reasoning", "investigate"],
 }
 
-ELIMINATE = PREFIX + """INSTRUCTIONS:
-- It is the Night Phase of Round {{round}}. As {{name}} the {{role}} choose the most strategic player to remove.
+ELIMINATE = PREFIX + """指示:
+- ラウンド {{round}} の夜のフェーズです。{{role}} の {{name}} として、最も戦略的に除去すべきプレイヤーを選んでください。
 {% if round == 0 -%}
-- There is no information is available in the first round, so choose someone at random.
+- 初日の夜には情報がないため、ランダムに選んでください。
 {% else -%}
-- Analyze accusations and identify influential Villagers who threaten your anonymity.
-- Consider players' behavior and the risks of removing them.
-- You must choose someone.
+- 告発を分析し、あなたの正体を脅かす影響力のある村人を特定してください。
+- プレイヤーの行動と、除去することのリスクを考慮してください。
+- 必ず誰かを選ばなければなりません。
 {% endif %}
 
 ```json
 {
-"reasoning": "string", //  Explain your reasoning step-by-step for who you want to remove from the game and why. Avoid using violent or harmful language.
-"remove": "string" // Name of the player. Choose from: {{options}}
+"reasoning": "string", // 誰をゲームから除外したいか、段階的に理由を説明してください。暴力的または有害な言葉は避けてください。
+"remove": "string" // プレイヤー名。選択肢: {{options}}
 }
 """
 
@@ -207,20 +207,20 @@ ELIMINATE_SCHEMA = {
     "required": ["reasoning", "remove"],
 }
 
-PROTECT = PREFIX + """INSTRUCTIONS:
-- It is the Night Phase of Round {{round}}. As {{name}} the {{role}} choose the most vulnerable player to protect.
+PROTECT = PREFIX + """指示:
+- ラウンド {{round}} の夜のフェーズです。{{role}} の {{name}} として、最も守るべきプレイヤーを選んでください。
 {% if round == 0 -%}
-- There is no information is available in the first round, so choose someone at random.
+- 初日の夜には情報がないため、ランダムに選んでください。
 {% else -%}
-- Consider who the Werewolves might target.
-- Prioritize players with crucial roles like the Seer and yourself.
-- You must choose someone.
+- 人狼が狙いそうなプレイヤーを考えてください。
+- 占い師や自分など、重要な役職のプレイヤーを優先して守ってください。
+- 必ず誰かを選ばなければなりません。
 {% endif %}
 
 ```json
 {
-"reasoning": "string", // Analyze the evidence and justify your decision for who you want to protect.
-"protect": "string" // Name of the player. Choose from: {{options}}
+"reasoning": "string", // 誰を守るべきかの理由を分析して説明してください。
+"protect": "string" // プレイヤー名。選択肢: {{options}}
 }
 """
 
@@ -233,23 +233,23 @@ PROTECT_SCHEMA = {
     "required": ["reasoning", "protect"],
 }
 
-SUMMARIZE = PREFIX + DEBATE_SO_FAR_THIS_ROUND + """INSTRUCTIONS:
-- Reflect on the round's debate as {{name}} the {{role}}.
-- Summarize the key points and strategic implications.
+SUMMARIZE = PREFIX + DEBATE_SO_FAR_THIS_ROUND + """指示:
+- {{role}} の {{name}} として、このラウンドの議論を振り返ってください。
+- 重要なポイントと戦略的な示唆を要約してください。
 {% if role == 'Werewolf' -%}
-- Pay attention to accusations against you and your allies.
-- Identify sympathetic or easily influenced players.
-- Identify key roles for potential elimination.
+- あなたや仲間への告発に注意を払いましょう。
+- 共感的または影響されやすいプレイヤーを特定してください。
+- 除去候補となる重要な役職を特定してください。
 {% else -%}
-- When a player makes a significant statement or shares information, carefully consider its credibility. Does it align with what you already know?
-- Analyze how others participate in the debate. Are there any contradictions in their words? Hidden motives behind their actions? Unusually quiet players?
-- Based on the debate, can you identify potential allies, trustworthy players, or those who might be the Seer or Doctor?
+- プレイヤーが重要な発言や情報を共有したとき、その信頼性を慎重に判断してください。それはあなたの知っている情報と一致していますか？
+- 議論への他者の参加の仕方を分析してください。発言に矛盾はありますか？行動の裏に隠された意図は？異常に静かなプレイヤーは？
+- 議論に基づき、潜在的な味方、信頼できるプレイヤー、占い師や医者の可能性がある人物を特定できますか？
 {% endif %}
 
 ```json
 {
-"reasoning": "string", // Your reasoning about what you should remember from this debate and why this information is important.
-"summary": "string" // Summarize the key points and noteworthy observations from the debate in a few sentences. Aim to make notes on as many players as you can — even seemingly insignificant details might become relevant in later rounds. Be specific. Remember, you are {{name}}. Write your summary from their point of view using "I" and "me."
+"reasoning": "string", // この議論から何を記憶すべきか、なぜそれが重要かを説明してください。
+"summary": "string" // 議論の主要な点や注目すべき観察を数文で要約してください。できるだけ多くのプレイヤーについてメモを取りましょう。些細に見える詳細でも後のラウンドで重要になるかもしれません。具体的に書いてください。あなたは {{name}} であることを忘れず、「私」を使ってあなたの視点からまとめてください。
 } """
 
 SUMMARIZE_SCHEMA = {

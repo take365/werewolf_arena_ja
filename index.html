@@ -13,7 +13,7 @@
 
     document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
 </script>
-<title>Werewolf</title>
+<title>人狼</title>
 <style>
     html {
         font-family: "Google Sans", "Roboto", sans-serif;
@@ -158,7 +158,7 @@
     }
 
     .Seer:after {
-        content: " (Seer)";
+        content: " (占い師)";
     }
 
     .Werewolf,
@@ -168,7 +168,7 @@
     }
 
     .Werewolf:after {
-        content: " (Wolf)";
+        content: " (人狼)";
     }
 
     .Doctor,
@@ -178,7 +178,7 @@
     }
 
     .Doctor:after {
-        content: " (Doctor)";
+        content: " (医者)";
     }
 
     /* .Villager, .Villager-short {
@@ -299,21 +299,21 @@ td {
 
 <body>
     <div id="header">
-        <h2>Werewolf Data Viewer</h2>
+        <h2>人狼データビューア</h2>
         <div id="game-file"></div>
     </div>
     <div id="main-container">
         <div id="player-container">
-            <h3>Players</h3>
+            <h3>プレイヤー</h3>
         </div>
         <div id="transcript-wrapper">
-            <h3>Game</h3>
+            <h3>ゲーム</h3>
             <div id="transcript-container"></div>
         </div>
         <div id="debug-wrapper">
-            <h3>Debug</h3>
+            <h3>デバッグ</h3>
             <div id="debug-container">
-                <p><i>Click something in the game history to see its debug data.</i></p>
+                <p><i>ゲーム履歴の項目をクリックすると、そのデバッグ情報が表示されます。</i></p>
             </div>
         </div>
     </div>

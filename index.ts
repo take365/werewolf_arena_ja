@@ -22,7 +22,7 @@ class Demo {
   constructor() {
     this.url = new URLSearchParams(window.location.search);
     this.session_id = this.url.get('session_id') || '';
-    if (this.session_id.length == 0) throw new Error('No session specified');
+    if (this.session_id.length == 0) throw new Error('セッションが指定されていません');
   }
 
   async retrieve_data() {
@@ -35,10 +35,10 @@ class Demo {
     // game state
     let state_response = await fetch(`http://localhost:8080/logs/${this.session_id}/game_complete.json`);
 
-    if (state_response.status == 404) {
-      state_response = await fetch(`http://localhost:8080/logs/${this.session_id}/game_partial.json`);
-      console.log("loaded partial file because game_complete.json is not available.")
-    }
+      if (state_response.status == 404) {
+        state_response = await fetch(`http://localhost:8080/logs/${this.session_id}/game_partial.json`);
+        console.log("game_complete.json が存在しないため、game_partial.json を読み込みました。")
+      }
     const state = await state_response.json();
     console.log("state", state)
 
@@ -125,7 +125,8 @@ class UIManager {
 
   add_round_header(round: number, phase: string) {
     const header = document.createElement('h3');
-    header.textContent = `Round ${round}: ${phase}`;
+    const phaseJa = phase === 'Night' ? '夜' : '昼';
+    header.textContent = `ラウンド ${round}: ${phaseJa}`;
     header.classList.add('round-header', 'round-' + phase, 'round-' + round);
     this.transcript_container.append(header);
   }
@@ -133,7 +134,7 @@ class UIManager {
   add_winner(winner: string) {
     const header = document.createElement('h3');
     const hr = document.createElement('hr');
-    header.textContent = `Winner: ${winner}`;
+    header.textContent = `勝者: ${winner}`;
     this.transcript_container.append(hr, header);
   }
 
@@ -148,7 +149,7 @@ class UIManager {
   add_ablations() {
     const ablation_keys = Object.keys(demo.data['state']['ablations']);
     const non_ww_ablations = document.createElement('div');
-    non_ww_ablations.textContent += 'Non-Werewolves: ';
+    non_ww_ablations.textContent += '人狼以外: ';
     for (const ablation of ablation_keys) {
       const ab_element = document.createElement('span');
       const value = demo.data['state']['ablations'][ablation];
@@ -157,7 +158,7 @@ class UIManager {
     }
 
     const ww_ablations = document.createElement('div');
-    ww_ablations.textContent += 'Werewolves: ';
+    ww_ablations.textContent += '人狼: ';
     if (demo.data['state']['werewolves'][0]['ablations'] != null) {
       const ww_ablation_keys = Object.keys(
         demo.data['state']['werewolves'][0]['ablations'],
@@ -169,9 +170,9 @@ class UIManager {
         ab_element.textContent = `${ablation}: ${value}, `;
         ww_ablations.appendChild(ab_element);
       }
-    } else {
-      ww_ablations.textContent += 'No Werewolf-specific ablations';
-    }
+      } else {
+        ww_ablations.textContent += '人狼に特化したアブレーションはありません';
+      }
 
     this.player_container.append(non_ww_ablations, ww_ablations);
   }
@@ -245,7 +246,7 @@ class UIManager {
     }
     const bid_note = document.createElement('div');
     bid_note.classList.add('bid-note');
-    bid_note.textContent = 'Bids to speak next (0-4)';
+    bid_note.textContent = '次の発言権への入札 (0-4)';
     this.transcript_container.appendChild(bid_note);
     this.transcript_container.appendChild(bid_container);
   }
@@ -291,7 +292,11 @@ class UIManager {
     } else {
       thinking = data['raw_resp'];
     }
-    container.textContent = `${role} decided to ${verb} ${data['result'][verb]}: "${thinking}"`;
+    const roleJa: Record<string, string> = { Werewolf: '人狼', Seer: '占い師', Doctor: '医者' };
+    const verbJa: Record<string, string> = { remove: '襲撃', investigate: '占う', protect: '守る' };
+    const roleText = roleJa[role] || role;
+    const verbText = verbJa[verb] || verb;
+    container.textContent = `${roleText}は${data['result'][verb]}を${verbText}ことに決めた: "${thinking}"`;
     const hidden_info = document.createElement('div');
     const raw_response = document.createElement('pre');
     const prompt = document.createElement('pre');
@@ -369,7 +374,7 @@ class UIManager {
         player_icon.classList.add('summarize-icon');
         const player_data = document.createElement('span');
 
-        player_data.textContent = ` is summarizing the round...`;
+        player_data.textContent = ` がラウンドを要約しています...`;
 
         const hidden_info = document.createElement('div');
         const raw_response = document.createElement('pre');
@@ -535,9 +540,9 @@ class UIManager {
     const new_elem = document.createElement('div');
     new_elem.classList.add('announcement');
     if (exiled == null) {
-      new_elem.textContent = `There was no consensus, so no one was exiled.`;
+      new_elem.textContent = `意見が一致しなかったため、誰も追放されませんでした。`;
     } else {
-      new_elem.textContent = `${exiled} was exiled.`;
+      new_elem.textContent = `${exiled} が追放されました。`;
       const role = this.get_role_from_name(exiled);
       const exiled_icon = document.createElement('img');
       exiled_icon.src = `static/${exiled}.png`;
@@ -560,9 +565,9 @@ class UIManager {
     const new_elem = document.createElement('div');
     new_elem.classList.add('announcement');
     if (eliminated == null) {
-      new_elem.textContent = `No one was taken out during the night.`;
+      new_elem.textContent = `夜の間に誰も襲撃されませんでした。`;
     } else {
-      new_elem.textContent = `${eliminated} was taken out by the Werewolves.`;
+      new_elem.textContent = `${eliminated} は人狼に襲撃されました。`;
       const role = this.get_role_from_name(eliminated);
       const eliminated_icon = document.createElement('img');
       eliminated_icon.src = `static/${eliminated}.png`;
